@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OIL Overtime Unified Enterprise Console</title>
+    
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script type="module">
@@ -47,7 +51,7 @@
             const id = document.getElementById('oilIdInput').value.trim();
             const pass = document.getElementById('passwordInput').value.trim();
             if (!id || !pass) { showLoginError("Please enter both ID and Password"); return; }
-            const email = id.includes('@') ? id : `${id}@ot.in`; // Adjust domain if needed
+            const email = id.includes('@') ? id : `${id}@ot.in`; 
             signInWithEmailAndPassword(auth, email, pass)
                 .then(() => { document.getElementById('loginError').style.display = 'none'; })
                 .catch((error) => { showLoginError("Invalid OIL ID or Password"); });
@@ -83,7 +87,6 @@
                 if (data) {
                     window.multiSheetData = data;
                     
-                    // Hide Upload Button, Show App
                     document.getElementById('open-file-btn').style.display = 'none';
                     document.getElementById('sheet-group').style.display = 'block';
                     
@@ -92,7 +95,6 @@
                     }
                     isInitialLoad = false;
                 } else {
-                    // Database is empty - show seeding button
                     document.getElementById('open-file-btn').style.display = 'block';
                     document.getElementById('sheet-group').style.display = 'none';
                 }
@@ -114,15 +116,8 @@
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
 
-        body {
-            background-color: var(--bg);
-            color: var(--text);
-            padding: 15px 25px 30px; 
-            height: 100vh;
-            overflow: hidden;
-        }
+        body { background-color: var(--bg); color: var(--text); padding: 15px 25px 30px; height: 100vh; overflow: hidden; }
 
-        /* === Login Overlay === */
         #loginOverlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px);
@@ -134,15 +129,9 @@
         }
         .login-box h2 { margin: 0 0 10px 0; color: var(--primary); font-size: 28px; font-weight: 800;}
         .login-box p { color: #64748b; margin-bottom: 25px; font-size: 15px;}
-        .login-input {
-            width: 100%; padding: 14px 16px; margin-bottom: 15px; border: 1px solid var(--border);
-            border-radius: 8px; font-size: 16px; outline: none; transition: 0.2s;
-        }
+        .login-input { width: 100%; padding: 14px 16px; margin-bottom: 15px; border: 1px solid var(--border); border-radius: 8px; font-size: 16px; outline: none; transition: 0.2s; }
         .login-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(27, 73, 101, 0.15); }
-        .btn-login {
-            width: 100%; padding: 14px; background: var(--primary); color: white;
-            border: none; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.2s;
-        }
+        .btn-login { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.2s; }
         .btn-login:hover { background: #133549; }
         #loginError { color: #dc2626; font-size: 14px; font-weight: 600; margin-top: 10px; display: none; }
 
@@ -169,7 +158,6 @@
         button.action-btn:hover { background-color: #133549; }
         button.secondary-btn { background-color: #e2e8f0; color: #334155; font-weight: 600; cursor: pointer; border: 1px solid #cbd5e1; padding: 11px 14px; border-radius: 6px; transition: all 0.2s; font-size: 0.9rem; width: 100%; margin-top: 5px; }
         button.secondary-btn:hover { background-color: #cbd5e1; }
-        
         button.clear-cell-btn { background-color: #fee2e2; color: #991b1b; border: 1px solid #fecaca; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: 600; width: 100%; margin-top: 5px; transition: background 0.2s; font-size: 0.9rem;}
         button.clear-cell-btn:hover { background-color: #fecaca; }
 
@@ -178,7 +166,6 @@
         .checkbox-container label:hover { background: #f0f4f8; border-radius: 4px; }
         .checkbox-container input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; }
 
-        /* HUD CAPACITY MONITOR */
         .dedicated-rem-box { background: #f8fafc; border: 2px solid #cbd5e1; border-radius: 10px; padding: 15px 20px; margin-bottom: 15px; transition: all 0.3s ease; }
         .dedicated-rem-box.state-green { background: #ecfdf5; border-color: #10b981; color: #065f46; }
         .dedicated-rem-box.state-orange { background: #fffbeb; border-color: #f59e0b; color: #92400e; }
@@ -189,7 +176,6 @@
         .rem-label-unit { font-size: 0.85rem; font-weight: 700; text-transform: uppercase;}
         .rem-footer { font-size: 0.85rem; font-weight: 600; border-top: 1px solid rgba(0,0,0,0.08); padding-top: 6px; margin-top: 4px; display: flex; justify-content: space-between;}
 
-        /* CUSTOM BULLETPROOF DROPDOWN */
         .custom-select-wrapper { position: relative; user-select: none; }
         .custom-select-input-box { width: 100%; padding: 8px 12px; font-size: 0.95rem; background: white; border: 1px solid #b9c4d1; border-radius: 6px; cursor: pointer; display: flex; align-items: center; }
         .custom-select-input-box input { border: none; outline: none; flex-grow: 1; font-size: 0.95rem; background: transparent; cursor: pointer; }
@@ -200,23 +186,19 @@
         .custom-option-item:hover { background: #f0f4f8; }
         .custom-option-item input[type="checkbox"] { width: 16px; height: 16px; pointer-events: none; }
 
-        /* MULTI-MONTH GRID CSS OVERHAUL */
         .table-header-bar { padding: 14px 20px; background: #f8fafc; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
         .table-container { overflow: auto; flex-grow: 1; background: #f8fafc;}
         
         table.blueprint-grid { width: max-content; border-collapse: separate; border-spacing: 0; font-size: 0.8rem; text-align: center; background: white; cursor: pointer; }
         table.blueprint-grid th { background-color: var(--primary); color: white; position: sticky; padding: 6px 4px; font-weight: 600; border-top: 1px solid #133549; border-bottom: 1px solid #133549; border-right: 1px solid #133549; z-index: 10; min-width: 38px; background-clip: padding-box; }
-        
         table.blueprint-grid th.sortable { cursor: pointer; transition: background 0.2s; user-select: none; }
         table.blueprint-grid th.sortable:hover { background-color: #133549; }
-        
         table.blueprint-grid td { border-bottom: 1px solid #cbd5e1; border-right: 1px solid #cbd5e1; padding: 3px; vertical-align: middle; height: 38px; background-clip: padding-box; transition: background 0.1s;}
         table.blueprint-grid th:first-child, table.blueprint-grid td:first-child { border-left: 1px solid #133549; }
 
         tr.header-row-1 th { top: 0; z-index: 15; height: 35px; box-sizing: border-box; }
         tr.header-row-2 th { top: 35px; z-index: 10; height: 35px; box-sizing: border-box; }
 
-        /* Frozen Left Stack */
         .sticky-id { position: sticky; left: 0; z-index: 25 !important; width: 85px !important; min-width: 85px !important; max-width: 85px !important; }
         .sticky-name { position: sticky; left: 85px; z-index: 25 !important; width: 170px !important; min-width: 170px !important; max-width: 170px !important; text-align: left; padding-left: 10px !important; }
         .sticky-rem { position: sticky; left: 255px; z-index: 25 !important; width: 90px !important; min-width: 90px !important; max-width: 90px !important; white-space: nowrap; }
@@ -227,7 +209,6 @@
 
         td.sticky-id, td.sticky-name, td.sticky-rem { background-color: white; }
         td.sticky-total { background-color: #e0f2fe !important; color: #0f172a !important; font-weight: bold; }
-        
         td.sticky-id { font-weight: bold; color: var(--primary); }
         td.sticky-name { text-align: left; padding-left: 10px; font-weight: 600; color: #1e293b; white-space: nowrap; }
         td.sticky-rem { font-weight: 800; }
@@ -235,7 +216,6 @@
         .month-gap { background-color: #cbd5e1 !important; width: 16px !important; min-width: 16px !important; max-width: 16px !important; border: none !important; cursor: default; }
         th.month-gap { z-index: 9 !important; top: 0;}
 
-        /* PERCENTAGE-BASED COLOR CODING ZONES */
         tr.row-green td { background-color: #ecfdf5; }
         tr.row-green td.sticky-id, tr.row-green td.sticky-name, tr.row-green td.sticky-rem { background-color: #ecfdf5; border-right-color: #a7f3d0; border-bottom-color: #a7f3d0;}
         table.blueprint-grid tr.row-green:hover td { background-color: #d1fae5; }
@@ -254,16 +234,11 @@
         table.blueprint-grid tr.row-red:hover td.sticky-id, table.blueprint-grid tr.row-red:hover td.sticky-name, table.blueprint-grid tr.row-red:hover td.sticky-rem { background-color: #fee2e2; }
         table.blueprint-grid tr.row-red:hover td.sticky-total { background-color: #bae6fd !important; }
 
-        /* ACTIVE ROW & ACTIVE CELL HIGHLIGHTING */
         tr.active-row td { background-color: #eff6ff !important; }
         tr.active-row td.sticky-id, tr.active-row td.sticky-name, tr.active-row td.sticky-rem { background-color: #eff6ff !important; color: #1d4ed8 !important; border-right-color: #bfdbfe; border-bottom-color: #bfdbfe;}
         tr.active-row td.sticky-total { background-color: #bfdbfe !important; color: #1d4ed8 !important; }
         
-        table.blueprint-grid td.active-cell { 
-            background-color: #fde047 !important; 
-            box-shadow: inset 0 0 0 2px #1d4ed8; 
-            border-radius: 2px;
-        }
+        table.blueprint-grid td.active-cell { background-color: #fde047 !important; box-shadow: inset 0 0 0 2px #1d4ed8; border-radius: 2px; }
 
         .pill-p { background-color: var(--pa-yellow); color: var(--pa-yellow-text); font-weight: 800; border-radius: 3px; padding: 2px 4px; display: inline-block; font-size:0.75rem; border: 1px solid var(--pa-yellow-border);}
         .pill-n { background-color: #ffffff; color: #334155; font-weight: 800; border: 1px solid #94a3b8; border-radius: 3px; padding: 2px 4px; display: inline-block; font-size:0.75rem;}
@@ -277,7 +252,6 @@
 
         #toast { position: fixed; top: 25px; right: 30px; padding: 12px 24px; border-radius: 6px; font-weight: 600; color: white; display: none; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
 
-        /* MODAL CSS */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(3px); }
         .modal-box { background: white; padding: 25px; border-radius: 10px; width: 340px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
         .modal-box h3 { margin-bottom: 15px; color: var(--primary); }
@@ -425,7 +399,13 @@
 
                 <div class="export-bar">
                     <span style="font-size: 0.85rem; color:#64748b; font-weight:600;" id="edit-tracker">Live Sync Active <i class="fas fa-cloud" style="color: #2a9d8f;"></i></span>
-                    <button class="export-btn" id="export-btn" disabled>💾 Export Master Excel File</button>
+                    <div style="display: flex; gap: 10px; align-items: center; max-width: 450px; justify-content: flex-end;">
+                        <select id="export-format" style="width: auto; padding: 12px; background: #f8fafc; border-color: var(--border); font-weight: 600;">
+                            <option value="excel">Excel (.xlsx)</option>
+                            <option value="pdf">PDF Document</option>
+                        </select>
+                        <button class="export-btn" id="export-btn" disabled style="max-width: 250px;">💾 Export Summary</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -449,13 +429,12 @@
         };
         const MONTH_ORDER = { "JANUARY":0, "FEBRUARY":1, "MARCH":2, "APRIL":3, "MAY":4, "JUNE":5, "JULY":6, "AUGUST":7, "SEPTEMBER":8, "OCTOBER":9, "NOVEMBER":10, "DECEMBER":11 };
 
-        let workbook = null; // Rebuilt in memory for export
+        let workbook = null; 
         let activeSheets = []; 
         let globalEmployeeList = []; 
         let activeEmpIds = []; 
         let activeDateCell = null; 
 
-        // Sorting configuration
         let sortConfig = { key: 'id', asc: true };
 
         const UI = {
@@ -477,7 +456,10 @@
             paHours: document.getElementById('pa-hours'),
             nHours: document.getElementById('n-hours'),
             clearCellBtn: document.getElementById('clear-cell-btn'),
+            
+            exportFormat: document.getElementById('export-format'),
             exportBtn: document.getElementById('export-btn'),
+            
             toast: document.getElementById('toast'),
             
             remCard: document.getElementById('rem-display-card'),
@@ -496,7 +478,6 @@
             isolateCheck: document.getElementById('isolate-check')
         };
 
-        // --- Core Helpers ---
         function sortSheetNamesDescending(sheetsArray) {
             sheetsArray.sort((a, b) => {
                 const aParts = a.split('-'); const bParts = b.split('-');
@@ -550,7 +531,6 @@
             UI.toast.style.display = 'block'; setTimeout(() => UI.toast.style.display = 'none', 3000);
         }
 
-        // --- FIREBASE DATA HOOK ---
         window.handleFirebaseDataLoad = function(data, isInitial) {
             window.multiSheetData = data;
             
@@ -573,7 +553,6 @@
             }
         };
 
-        // --- SEEDING CLOUD FROM EXCEL FILE ---
         UI.fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0]; if (!file) return;
             const reader = new FileReader();
@@ -600,7 +579,6 @@
             reader.readAsArrayBuffer(file);
         });
 
-        // --- UI REFRESH LOGIC ---
         function refreshSheetCheckboxes() {
             UI.sheetCheckboxes.innerHTML = '';
             if (!window.multiSheetData) return;
@@ -689,7 +667,6 @@
             UI.boxCapLabel.textContent = `Cap: ${CURRENT_LIMIT.toFixed(1)} Hrs`;
             UI.blueprintTitle.textContent = activeSheets.length === 1 ? `Active Logged Hours (${activeSheets[0]})` : `Enterprise Multi-Month View (${activeSheets.join(', ')})`;
 
-            // Allow Export when any sheets are selected
             UI.exportBtn.disabled = activeSheets.length === 0;
             
             buildDataModel();
@@ -930,7 +907,6 @@
 
         UI.isolateCheck.addEventListener('change', renderMasterGrid);
 
-        // --- INSTANT CLOUD SAVE ON TYPE ---
         UI.paHours.addEventListener('input', handleAutoCommit);
         UI.nHours.addEventListener('input', handleAutoCommit);
 
@@ -963,9 +939,7 @@
                 targetRow['remaining'] = BASE_MONTHLY_LIMIT - sheetTotal;
             });
 
-            // INSTANT SYNC TO CLOUD
             await window.syncSheetToCloud(targetSheetName, window.multiSheetData[targetSheetName]);
-            
             updateHUD(); renderMasterGrid(); 
         }
 
@@ -1071,7 +1045,6 @@
             }
         }
 
-        // --- DELETE MASTER EXCEL (NEW) ---
         UI.deleteSheetBtn.addEventListener('click', async () => {
             if (activeSheets.length === 0) { 
                 showToast("Please select at least one month to delete.", "#e63946"); 
@@ -1082,13 +1055,9 @@
             
             if (confirmDelete) {
                 showToast("⏳ Deleting selected months...", "#e5a910");
-                
-                // Delete each selected sheet from Firebase
                 for (const sheetName of activeSheets) {
                     await remove(ref(db, 'ot_tracker/data/' + sheetName));
                 }
-                
-                // Update metadata
                 await set(ref(db, 'ot_tracker/meta/'), { lastUpdatedBy: window.currentUser, timestamp: Date.now() });
                 
                 showToast("✅ Months deleted successfully.");
@@ -1097,45 +1066,45 @@
             }
         });
 
-       // --- EXPORT MASTER EXCEL (REWRITTEN FOR PIVOT SUMMARY) ---
+        // --- MULTI-FORMAT EXPORT (EXCEL / PDF) WITH GRAND TOTAL ---
         UI.exportBtn.addEventListener('click', () => {
             if (activeSheets.length === 0) return; 
             const ts = new Date().toISOString().slice(0,19).replace(/[-T:]/g, "");
+            const format = UI.exportFormat.value;
             
-            let exportWb = XLSX.utils.book_new();
-            
-            // Ensure our employee list is up to date and sorted
             sortEmployeeList();
-            
-            // activeSheets is currently sorted descending (newest first). 
-            // We reverse it to display chronological order (left to right) in Excel.
             let exportSheets = [...activeSheets].reverse(); 
             
-            // 1. Build Headers
-            let row1 = ["", ""]; // Top row (Empty over ID and Name)
-            let row2 = ["OIL ID", "Employee Name"]; // Second row
-            let merges = [];
+            let row1 = ["OIL ID", "Employee Name"]; 
+            let row2 = ["", ""]; 
+            let merges = [
+                { s: { r: 0, c: 0 }, e: { r: 1, c: 0 } }, 
+                { s: { r: 0, c: 1 }, e: { r: 1, c: 1 } }  
+            ];
             
-            let colIndex = 2; // Column index starts at 2 (C in Excel)
+            let colIndex = 2; 
             
             exportSheets.forEach(sheetName => {
-                // Format sheet name "JANUARY-26" -> "January" for the header
                 const parts = sheetName.split('-');
                 const formattedMonth = parts[0].charAt(0).toUpperCase() + parts[0].slice(1).toLowerCase();
                 
-                row1.push(formattedMonth, ""); // Month name, then an empty cell for the merge
+                row1.push(formattedMonth, ""); 
                 row2.push("total", "remaining");
                 
-                // Create a merge instruction for the top row (e.g., span "January" over C & D)
-                merges.push({ s: { r: 0, c: colIndex }, e: { r: 0, c: colIndex + 1 } });
+                merges.push({ s: { r: 0, c: colIndex }, e: { r: 0, c: colIndex + 1 } }); 
                 colIndex += 2;
             });
+
+            row1.push("Grand Total");
+            row2.push("");
+            merges.push({ s: { r: 0, c: colIndex }, e: { r: 1, c: colIndex } }); 
             
             let spreadsheetData = [row1, row2];
+            let pdfBody = []; 
             
-            // 2. Build Employee Data Rows
             globalEmployeeList.forEach(emp => {
                 let row = [emp.id, emp.name];
+                let employeeGrandTotal = 0; 
                 
                 exportSheets.forEach(sheetName => {
                     let sData = window.multiSheetData[sheetName];
@@ -1144,30 +1113,60 @@
                     if (empRow) {
                         let totalVal = parseFloat(empRow.total) || 0;
                         let remVal = parseFloat(empRow.remaining);
-                        
-                        // If the database has a blank/empty string, calculate the remaining math manually
-                        if (isNaN(remVal)) {
-                            remVal = BASE_MONTHLY_LIMIT - totalVal;
-                        }
+                        if (isNaN(remVal)) remVal = BASE_MONTHLY_LIMIT - totalVal;
 
+                        employeeGrandTotal += totalVal; 
+                        
                         row.push(totalVal);
                         row.push(remVal);
                     } else {
-                        // If employee isn't in this month's data, output 0 and default max
                         row.push(0, BASE_MONTHLY_LIMIT);
                     }
                 });
+
+                row.push(employeeGrandTotal);
+                
                 spreadsheetData.push(row);
+                pdfBody.push(row); 
             });
             
-            // 3. Convert Array of Arrays to SheetJS Format and apply merges
-            let ws = XLSX.utils.aoa_to_sheet(spreadsheetData);
-            ws['!merges'] = merges;
-            
-            XLSX.utils.book_append_sheet(exportWb, ws, "Master Summary");
-            
-            XLSX.writeFile(exportWb, `OIL_Summary_${ts}.xlsx`);
-            showToast("Master Summary Excel generated successfully!", "#1b4965");
+            if (format === 'excel') {
+                let exportWb = XLSX.utils.book_new();
+                let ws = XLSX.utils.aoa_to_sheet(spreadsheetData);
+                ws['!merges'] = merges; 
+                XLSX.utils.book_append_sheet(exportWb, ws, "Master Summary");
+                XLSX.writeFile(exportWb, `OIL_Summary_${ts}.xlsx`);
+                showToast("Master Excel generated successfully!", "#1b4965");
+            } 
+            else if (format === 'pdf') {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF('landscape'); 
+                
+                doc.setFontSize(14);
+                doc.setTextColor(27, 73, 101);
+                doc.text("OIL Overtime Master Summary", 14, 15);
+                
+                doc.setFontSize(9);
+                doc.setTextColor(100, 116, 139);
+                doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 22);
+
+                doc.autoTable({
+                    startY: 28,
+                    head: [row1, row2],
+                    body: pdfBody,
+                    theme: 'grid',
+                    styles: { fontSize: 8, cellPadding: 2, textColor: 40 },
+                    headStyles: { fillColor: [27, 73, 101], textColor: 255, halign: 'center', valign: 'middle' },
+                    columnStyles: {
+                        0: { fontStyle: 'bold', halign: 'center' }, 
+                        1: { cellWidth: 35 }, 
+                        [row1.length - 1]: { fontStyle: 'bold', fillColor: [240, 244, 248] } 
+                    }
+                });
+
+                doc.save(`OIL_Summary_${ts}.pdf`);
+                showToast("PDF Document generated successfully!", "#1b4965");
+            }
         });
     </script>
 </body>
